@@ -10,7 +10,11 @@ namespace Hangman
     {
         static void Main(string[] args)
         {
-            Game game = new Game(args[0]);
+            Game game = new Game(args[0] != null ? args[0] : "jogo.txt");
+
+            game.renderBoard();
+            game.checkGuess('o');
+            game.renderBoard();
         }
     }
 }
