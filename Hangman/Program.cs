@@ -13,8 +13,10 @@ namespace Hangman
             Game game = new Game(args[0] != null ? args[0] : "jogo.txt");
 
             game.renderBoard();
-            game.checkGuess('o');
-            game.renderBoard();
+            while( !game.end ){
+                game.checkGuess((char) Console.Read());
+                game.renderBoard();
+            }
         }
     }
 }

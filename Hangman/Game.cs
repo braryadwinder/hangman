@@ -16,6 +16,7 @@ namespace Hangman
         private List<string> usedTips { get; set; }
         private string CorrectLetters;
         private int nextTip;
+        public bool end = false;
 
         public Game(string path)
         {
@@ -80,23 +81,38 @@ namespace Hangman
 
         public void renderBoard()
         {
-            Console.WriteLine(this.CorrectLetters.Replace("_", "_ "));
+            Console.WriteLine(this.CorrectLetters.Aggregate(string.Empty, (c, i) => c + i + ' '));
             
             for (var i = 0; i < this.usedTips.Count; i++)
             {
                 Console.WriteLine( this.usedTips[i].Trim() );
             }
+
             Console.WriteLine("[F2] Nova dica [letra] Palpite");            
         }
 
         public void checkGuess(char guess){
-            if (this.Answer.Word.Contains(guess))
+            if (this.Answer.Word.ToLower().Contains(guess.ToString().ToLower()))
             {
-                var index = this.Answer.Word.IndexOf(guess);
                 var correct = this.CorrectLetters.ToCharArray();
-                correct[index] = guess;
+                for (int i = 0; i < this.Answer.Size; i++)
+                {
+                    if(this.Answer.Word.ToLower()[i] == guess.ToString().ToLower()[0]){
+                        correct[i] = guess;
+                    }
+                }
+                    
 
                 this.CorrectLetters = new string(correct);
+
+                if (this.CorrectLetters.ToString().ToLower() == this.Answer.Word.ToLower())
+                {
+                    this.end = true;
+                }
+            }
+            else
+            {
+                
             }
         }
 
