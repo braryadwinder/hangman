@@ -81,14 +81,26 @@ namespace Hangman
 
         public void renderBoard()
         {
-            Console.WriteLine(this.CorrectLetters.Aggregate(string.Empty, (c, i) => c + i + ' '));
+            Console.Clear();
+            Console.WriteLine(this.CorrectLetters.Aggregate(string.Empty, (c, i) => c + i + ' ') + '\n');
             
             for (var i = 0; i < this.usedTips.Count; i++)
             {
-                Console.WriteLine( this.usedTips[i].Trim() );
+                    Console.WriteLine( "Dica: " + this.usedTips[i].Trim() );
             }
 
-            Console.WriteLine("[F2] Nova dica [letra] Palpite");            
+            var tips =
+                from t in this.Answer.Tips
+                where t != null
+                select t;
+
+            if (tips.Count() != this.usedTips.Count)
+            {
+                Console.WriteLine("[F2] Nova dica [letra] Palpite");
+                return;
+            }
+
+            Console.WriteLine("[letra] Palpite");            
         }
 
         public void checkGuess(char guess){
@@ -113,6 +125,15 @@ namespace Hangman
             else
             {
                 
+            }
+        }
+
+        public void showNewTip()
+        {
+            if (Answer.Tips.Count() > 0 && Answer.Tips[this.nextTip] != null)
+            { 
+                this.usedTips.Add(Answer.Tips[this.nextTip]);
+                this.nextTip++;
             }
         }
 
