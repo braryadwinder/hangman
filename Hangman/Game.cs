@@ -15,8 +15,11 @@ namespace Hangman
         private Answer Answer { get; set; }
         private List<string> usedTips { get; set; }
         private string CorrectLetters;
-        private int nextTip;
-        public bool end = false;
+        private int NextTip;
+        public bool End { get; set; }
+        private int errors = 6;
+        private List<char> WrongGuesses;
+
 
         public Game(string path)
         {
@@ -28,10 +31,11 @@ namespace Hangman
             }
             else
             {
-                if (!File.Exists(path)) { 
+                if (!File.Exists(path))
+                {
                     new Exception("fudeu");
                 }
-                
+
                 file = new StreamReader(path);
                 var words = Game.findAnswer(file);
 
@@ -42,10 +46,9 @@ namespace Hangman
                 this.CorrectLetters = new string('_', this.Answer.Size);
                 this.usedTips = new List<string>();
                 this.usedTips.Add(this.Answer.Tips[0]);
-                this.nextTip = 1;
+                this.NextTip = 1;
+                this.WrongGuesses = new List<char>();
             }
-
-
         }
 
         static private List<Answer> findAnswer(StreamReader file)
@@ -86,9 +89,10 @@ namespace Hangman
             
             for (var i = 0; i < this.usedTips.Count; i++)
             {
-                    Console.WriteLine( "Dica: " + this.usedTips[i].Trim() );
+                    Console.WriteLine( "Dica: " + this.usedTips[i].Trim());
             }
 
+            Console.WriteLine();
             var tips =
                 from t in this.Answer.Tips
                 where t != null
@@ -96,11 +100,11 @@ namespace Hangman
 
             if (tips.Count() != this.usedTips.Count)
             {
-                Console.WriteLine("[F2] Nova dica [letra] Palpite");
+                Console.WriteLine("[F2] Nova dica [letra] Palpite | Erros : {0}", this.WrongGuesses.Count());
                 return;
             }
 
-            Console.WriteLine("[letra] Palpite");            
+            Console.WriteLine("[letra] Palpite | Erros : {0}", this.WrongGuesses.Count());            
         }
 
         public void checkGuess(char guess){
@@ -119,21 +123,28 @@ namespace Hangman
 
                 if (this.CorrectLetters.ToString().ToLower() == this.Answer.Word.ToLower())
                 {
-                    this.end = true;
+                    this.End = true;
                 }
             }
             else
             {
+                this.errors--;
                 
+                if (this.errors <= 0)
+                {
+                    this.End = true;
+                }
+
+                this.WrongGuesses.Add(guess);
             }
         }
 
         public void showNewTip()
         {
-            if (Answer.Tips.Count() > 0 && Answer.Tips[this.nextTip] != null)
+            if (Answer.Tips.Count() > 0 && Answer.Tips[this.NextTip] != null)
             { 
-                this.usedTips.Add(Answer.Tips[this.nextTip]);
-                this.nextTip++;
+                this.usedTips.Add(Answer.Tips[this.NextTip]);
+                this.NextTip++;
             }
         }
 
@@ -141,7 +152,5 @@ namespace Hangman
         {
             return this.Answer.ToString();
         }
-
-
     }
 }

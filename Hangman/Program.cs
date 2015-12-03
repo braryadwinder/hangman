@@ -15,7 +15,7 @@ namespace Hangman
             char c;
             game.renderBoard();
 
-            while( !game.end ){
+            while( !game.End ){
 
                 while (Console.KeyAvailable == false)
                     Thread.Sleep(250); // Loop until input is entered.
